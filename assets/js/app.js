@@ -27,7 +27,9 @@ if (file.type.startsWith("image/")) {
 
     fileInfo.style.display = "block";
 previewArea.innerHTML = "";
-
+if (file.type === "application/pdf") {
+    showPDF(file);
+}
 if (file.type.startsWith("image/")) {
 
     const image = document.createElement("img");
