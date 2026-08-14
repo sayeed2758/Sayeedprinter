@@ -1,14 +1,17 @@
 const fileInput = document.getElementById("fileInput");
-
 const fileInfo = document.getElementById("fileInfo");
-
 const previewArea = document.getElementById("previewArea");
 
 const fileActions = document.getElementById("fileActions");
-
 const removeBtn = document.getElementById("removeBtn");
-
 const printBtn = document.getElementById("printBtn");
+
+
+/* =========================
+   INITIAL STATE
+========================= */
+
+fileActions.style.display = "none";
 
 
 /* =========================
@@ -17,23 +20,23 @@ const printBtn = document.getElementById("printBtn");
 
 fileInput.addEventListener("change", function () {
 
-    const file = this.files[0];
+    const file = fileInput.files[0];
 
     if (!file) {
-        resetFile();
+        clearFile();
         return;
     }
 
-    showFile(file);
+    displayFile(file);
 
 });
 
 
 /* =========================
-   SHOW FILE
+   DISPLAY FILE
 ========================= */
 
-function showFile(file) {
+function displayFile(file) {
 
     fileInfo.style.display = "block";
 
@@ -47,7 +50,7 @@ function showFile(file) {
     previewArea.innerHTML = "";
 
 
-    /* IMAGE PREVIEW */
+    /* IMAGE */
 
     if (file.type.startsWith("image/")) {
 
@@ -55,16 +58,14 @@ function showFile(file) {
 
         image.src = URL.createObjectURL(file);
 
-        image.onload = function () {
-            URL.revokeObjectURL(image.src);
-        };
+        image.alt = file.name;
 
         previewArea.appendChild(image);
 
     }
 
 
-    /* ACTION BUTTONS */
+    /* SHOW ACTION BUTTONS */
 
     fileActions.style.display = "flex";
 
@@ -75,16 +76,18 @@ function showFile(file) {
    REMOVE FILE
 ========================= */
 
-removeBtn.addEventListener("click", function () {
+removeBtn.addEventListener("click", function (event) {
 
-    resetFile();
+    event.preventDefault();
+
+    fileInput.value = "";
+
+    clearFile();
 
 });
 
 
-function resetFile() {
-
-    fileInput.value = "";
+function clearFile() {
 
     fileInfo.textContent = "";
 
@@ -98,14 +101,19 @@ function resetFile() {
 
 
 /* =========================
-   PRINT
+   PRINT FILE
 ========================= */
 
-printBtn.addEventListener("click", function () {
+printBtn.addEventListener("click", function (event) {
+
+    event.preventDefault();
 
     const file = fileInput.files[0];
 
     if (!file) {
+
+        alert("Please select a file first.");
+
         return;
     }
 
@@ -116,55 +124,92 @@ printBtn.addEventListener("click", function () {
 
         const imageURL = URL.createObjectURL(file);
 
-        const printWindow = window.open("", "_blank");
+        const printWindow = window.open(
+            "",
+            "_blank",
+            "width=900,height=700"
+        );
+
 
         if (!printWindow) {
-            alert("Please allow pop-ups to print the file.");
+
+            alert(
+                "Popup blocked. Please allow popups for this website."
+            );
+
+            URL.revokeObjectURL(imageURL);
+
             return;
         }
 
+
+        printWindow.document.open();
+
         printWindow.document.write(`
             <!DOCTYPE html>
+
             <html>
+
             <head>
-                <title>Print - ${file.name}</title>
+
+                <title>${file.name}</title>
 
                 <style>
+
+                    * {
+                        box-sizing: border-box;
+                    }
+
                     body {
                         margin: 0;
                         padding: 20px;
-                        text-align: center;
                         background: white;
+                        text-align: center;
                     }
 
                     img {
                         max-width: 100%;
-                        height: auto;
+                        max-height: 95vh;
+                        object-fit: contain;
                     }
 
                     @media print {
+
                         body {
                             padding: 0;
                         }
 
                         img {
                             max-width: 100%;
+                            max-height: 100vh;
                         }
+
                     }
+
                 </style>
+
             </head>
 
             <body>
 
-                <img src="${imageURL}">
+                <img src="${imageURL}" alt="Print Preview">
 
                 <script>
+
                     window.onload = function () {
-                        window.print();
+
+                        setTimeout(function () {
+
+                            window.print();
+
+                        }, 300);
+
                     };
+
                 <\/script>
 
             </body>
+
             </html>
         `);
 
@@ -174,22 +219,30 @@ printBtn.addEventListener("click", function () {
     }
 
 
-    /* PDF PRINT */
+    /* PDF */
 
     if (file.type === "application/pdf") {
 
         const pdfURL = URL.createObjectURL(file);
 
-        const printWindow = window.open(pdfURL, "_blank");
+        const pdfWindow = window.open(
+            pdfURL,
+            "_blank"
+        );
 
-        if (!printWindow) {
-            alert("Please allow pop-ups to print the PDF.");
+
+        if (!pdfWindow) {
+
+            alert(
+                "Popup blocked. Please allow popups for this website."
+            );
+
         }
 
         return;
     }
 
 
-    alert("This file type cannot be printed directly.");
+    alert("This file type is not supported for printing.");
 
 });
