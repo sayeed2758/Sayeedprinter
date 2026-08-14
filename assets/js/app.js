@@ -44,3 +44,27 @@ if (file.type.startsWith("image/")) {
     }, 1500);
 
 });
+const uploadBox = document.getElementById("uploadBox");
+
+uploadBox.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadBox.classList.add("dragging");
+});
+
+uploadBox.addEventListener("dragleave", () => {
+    uploadBox.classList.remove("dragging");
+});
+
+uploadBox.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    uploadBox.classList.remove("dragging");
+
+    const file = e.dataTransfer.files[0];
+
+    if (!file) return;
+
+    fileInput.files = e.dataTransfer.files;
+
+    fileInput.dispatchEvent(new Event("change"));
+});
