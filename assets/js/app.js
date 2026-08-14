@@ -9,7 +9,13 @@ fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
 
     if (!file) return;
+const processing = document.getElementById("processing");
 
+processing.style.display = "block";
+
+setTimeout(() => {
+    processing.style.display = "none";
+}, 1500);
     fileName.textContent = file.name;
     fileType.textContent = file.type || "Unknown file type";
 
