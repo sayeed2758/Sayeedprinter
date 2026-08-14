@@ -68,3 +68,35 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
+/* Upload Box Animation */
+
+#uploadBox {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+#uploadBox:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(79, 70, 229, 0.12);
+    border-color: #a5b4fc;
+}
+
+
+/* Browse Button Animation */
+
+.browse-btn {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.browse-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.25);
+}
+
+.browse-btn:active {
+    transform: scale(0.96);
+}
