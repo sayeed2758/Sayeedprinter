@@ -16,21 +16,7 @@
         rel="stylesheet"
         href="assets/css/style.css"
     >
-<style>
-#fileInput {
-    display: none;
-}
 
-.browse-btn {
-    display: inline-block;
-    padding: 14px 30px;
-    border-radius: 12px;
-    background: #4f46e5;
-    color: #ffffff;
-    font-size: 16px;
-    cursor: pointer;
-}
-</style>
 </head>
 
 <body>
@@ -42,28 +28,56 @@
         <p>Upload • Preview • Print</p>
 
         <div id="uploadBox">
-     
-<div class="upload-icon">
-    ↑
-</div>
 
-<h2>Upload Your File</h2>
+            <div class="upload-icon">
+                ↑
+            </div>
 
-<p class="upload-text">
-    Drop your PDF, photo or file here
-</p>
+            <h2>Upload Your File</h2>
+
+            <p class="upload-text">
+                Drop your PDF, photo or file here
+            </p>
 
             <input
                 type="file"
                 id="fileInput"
                 accept="image/*,.pdf"
             >
-<label for="fileInput" class="browse-btn">
-    Browse File
-</label>
+
+            <label
+                for="fileInput"
+                class="browse-btn"
+            >
+                Browse File
+            </label>
+
             <div id="fileInfo"></div>
 
             <div id="previewArea"></div>
+
+            <div
+                id="fileActions"
+                class="file-actions"
+            >
+
+                <button
+                    type="button"
+                    id="removeBtn"
+                    class="remove-btn"
+                >
+                    Remove File
+                </button>
+
+                <button
+                    type="button"
+                    id="printBtn"
+                    class="print-btn"
+                >
+                    Print
+                </button>
+
+            </div>
 
         </div>
 
