@@ -47,9 +47,7 @@ function showFile(file) {
     previewArea.innerHTML = "";
 
 
-    /* =========================
-       IMAGE PREVIEW
-    ========================= */
+    /* IMAGE PREVIEW */
 
     if (file.type.startsWith("image/")) {
 
@@ -66,45 +64,7 @@ function showFile(file) {
     }
 
 
-    /* =========================
-       PDF PREVIEW
-    ========================= */
-
-    else if (file.type === "application/pdf") {
-
-        const pdfURL = URL.createObjectURL(file);
-
-        const pdfFrame = document.createElement("iframe");
-
-        pdfFrame.src = pdfURL;
-
-        pdfFrame.title = "PDF Preview";
-
-        pdfFrame.className = "pdf-preview";
-
-        previewArea.appendChild(pdfFrame);
-
-    }
-
-
-    /* =========================
-       UNSUPPORTED FILE
-    ========================= */
-
-    else {
-
-        previewArea.innerHTML = `
-            <div class="unsupported-file">
-                This file type cannot be previewed.
-            </div>
-        `;
-
-    }
-
-
-    /* =========================
-       ACTION BUTTONS
-    ========================= */
+    /* ACTION BUTTONS */
 
     fileActions.style.display = "flex";
 
