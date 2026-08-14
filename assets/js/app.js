@@ -1,4 +1,3 @@
-
 const fileInput = document.getElementById("fileInput");
 
 const fileInfo = document.getElementById("fileInfo");
@@ -8,95 +7,79 @@ const fileType = document.getElementById("fileType");
 const processing = document.getElementById("processing");
 const previewArea = document.getElementById("previewArea");
 
+const uploadBox = document.getElementById("uploadBox");
+
+
 fileInput.addEventListener("change", function () {
-previewArea.innerHTML = "";
 
-if (file.type.startsWith("image/")) {
-    const image = document.createElement("img");
-
-    image.src = URL.createObjectURL(file);
-
-    previewArea.appendChild(image);
-}
     const file = this.files[0];
 
     if (!file) return;
 
+
     fileName.textContent = file.name;
+
     fileType.textContent = file.type || "File";
 
     fileInfo.style.display = "block";
-previewArea.innerHTML = "";
-if (file.type === "application/pdf") {
-    showPDF(file);
-}
-if (file.type.startsWith("image/")) {
 
-    const image = document.createElement("img");
-
-    image.src = URL.createObjectURL(file);
-
-    previewArea.appendChild(image);
-
-}
-    processing.style.display = "block";
-
-    setTimeout(function () {
-        processing.style.display = "none";
-    }, 1500);
-
-});
-const uploadBox = document.getElementById("uploadBox");
-
-uploadBox.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    uploadBox.classList.add("dragging");
-});
-
-uploadBox.addEventListener("dragleave", () => {
-    uploadBox.classList.remove("dragging");
-});
-
-uploadBox.addEventListener("drop", (e) => {
-    e.preventDefault();
-
-    uploadBox.classList.remove("dragging");
-
-    const file = e.dataTransfer.files[0];
-
-    if (!file) return;
-
-    fileInput.files = e.dataTransfer.files;
-
-    fileInput.dispatchEvent(new Event("change"));
-});
-async function showPDF(file) {
-
-    const pdf = await pdfjsLib.getDocument({
-        data: await file.arrayBuffer()
-    }).promise;
 
     previewArea.innerHTML = "";
 
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
 
-        const page = await pdf.getPage(pageNumber);
+    if (file.type.startsWith("image/")) {
 
-        const viewport = page.getViewport({
-            scale: 1.2
-        });
+        const image = document.createElement("img");
 
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
+        image.src = URL.createObjectURL(file);
 
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
+        previewArea.appendChild(image);
 
-        previewArea.appendChild(canvas);
-
-        await page.render({
-            canvasContext: context,
-            viewport: viewport
-        }).promise;
     }
-}
+
+
+    processing.style.display = "block";
+
+
+    setTimeout(function () {
+
+        processing.style.display = "none";
+
+    }, 1500);
+
+});
+
+
+uploadBox.addEventListener("dragover", function (e) {
+
+    e.preventDefault();
+
+    uploadBox.classList.add("dragging");
+
+});
+
+
+uploadBox.addEventListener("dragleave", function () {
+
+    uploadBox.classList.remove("dragging");
+
+});
+
+
+uploadBox.addEventListener("drop", function (e) {
+
+    e.preventDefault();
+
+    uploadBox.classList.remove("dragging");
+
+
+    const files = e.dataTransfer.files;
+
+    if (!files.length) return;
+
+
+    fileInput.files = files;
+
+    fileInput.dispatchEvent(new Event("change"));
+
+});
