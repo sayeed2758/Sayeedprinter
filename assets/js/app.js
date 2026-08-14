@@ -138,8 +138,8 @@ function finishPrintAnimation(success = true) {
 /* =========================
    PRINT
 ========================= */
-
 printBtn.addEventListener("click", async function () {
+
     const file = fileInput.files[0];
 
     if (!file) {
@@ -154,85 +154,142 @@ printBtn.addEventListener("click", async function () {
         return;
     }
 
-    startPrintAnimation();
     printBtn.disabled = true;
 
-    let printWindow = null;
-
     try {
-        /*
-         * Open immediately from the user's click.
-         * This reduces the chance of popup blocking.
-         */
-        printWindow = window.open("", "_blank");
 
-        if (!printWindow) {
-            throw new Error(
-                "Popup blocked. Please allow pop-ups for this website."
+        /* ==========================================
+           START VIDEO-STYLE PRINT ANIMATION
+        ========================================== */
+
+        startPrintAnimation();
+
+        setPrintAnimationStatus(
+            "Starting printer..."
+        );
+
+        await wait(700);
+
+        setPrintAnimationStatus(
+            "Paper is feeding..."
+        );
+
+        await wait(1600);
+
+        setPrintAnimationStatus(
+            "Preparing your document..."
+        );
+
+        /* ==========================================
+           CREATE PRINT LAYER
+        ========================================== */
+
+        const printLayer =
+            createPrintLayer();
+
+        /* ==========================================
+           IMAGE
+        ========================================== */
+
+        if (file.type.startsWith("image/")) {
+
+            await prepareImagePrintLayer(
+                printLayer,
+                file
+            );
+
+        }
+
+        /* ==========================================
+           PDF
+        ========================================== */
+
+        else if (
+            file.type ===
+            "application/pdf"
+        ) {
+
+            await preparePdfPrintLayer(
+                printLayer,
+                file
             );
         }
 
-        writePrintLoadingPage(printWindow, file.name);
-
-        setPrintAnimationStatus("Paper is feeding...");
-
-        await wait(2300);
-
-        setPrintAnimationStatus("Preparing your document...");
-
-        if (file.type.startsWith("image/")) {
-            await prepareImagePrint(printWindow, file);
-        } else {
-            await preparePdfPrint(printWindow, file);
-        }
-
-        setPrintAnimationStatus("Opening print dialog...");
-
-        finishPrintAnimation(true);
-
-        /*
-         * Let the print window finish layout/decoding before printing.
-         */
-        await wait(350);
-
-        printWindow.focus();
-        printWindow.print();
-
-    } catch (error) {
-        console.error(error);
-
-        finishPrintAnimation(false);
-
         setPrintAnimationStatus(
-            error?.message || "Could not prepare the print."
+            "Opening print dialog..."
         );
 
-        if (printWindow && !printWindow.closed) {
-            printWindow.document.body.innerHTML = `
-                <div style="
-                    font-family: Arial, sans-serif;
-                    padding: 40px;
-                    color: #b91c1c;
-                ">
-                    <h2>Print preparation failed</h2>
-                    <p>${escapeHtml(error?.message || "Unknown error")}</p>
-                </div>
-            `;
-        } else {
-            alert(error?.message || "Could not prepare the print.");
-        }
+        await wait(500);
 
-    } finally {
-        printBtn.disabled = false;
+        /* ==========================================
+           HIDE ANIMATION BEFORE PRINT
+        ========================================== */
+
+        printAnimation.classList.remove(
+            "is-active"
+        );
+
+        printAnimation.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
         /*
-         * Keep the animation visible briefly so the success/error state
-         * is visible, then close it.
+         * Give browser one frame to apply
+         * print-layer styles.
          */
+        await wait(150);
+
+        /* ==========================================
+           NATIVE PRINT
+        ========================================== */
+
+        window.print();
+
+        /*
+         * Cleanup happens through afterprint.
+         */
+
+    } catch (error) {
+
+        console.error(
+            "Print Error:",
+            error
+        );
+
+        printAnimationCard.classList.add(
+            "error"
+        );
+
+        printAnimationTitle.textContent =
+            "Print failed";
+
+        printAnimationSubtitle.textContent =
+            "Please try again";
+
+        setPrintAnimationStatus(
+            error?.message ||
+            "Could not prepare the document."
+        );
+
         setTimeout(() => {
-            printAnimation.classList.remove("is-active");
-            printAnimation.setAttribute("aria-hidden", "true");
-        }, 900);
+
+            printAnimation.classList.remove(
+                "is-active"
+            );
+
+            printAnimation.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            removePrintLayer();
+
+        }, 1200);
+
+    } finally {
+
+        printBtn.disabled = false;
     }
 });
 
@@ -757,3 +814,371 @@ function escapeHtml(value) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+/* =========================================================
+   SAME-PAGE PRINT SYSTEM
+   No window.open()
+   No about:blank
+   No extra browser tab
+========================================================= */
+
+let activePrintLayer = null;
+
+
+/* =========================================================
+   CREATE PRINT LAYER
+========================================================= */
+
+function createPrintLayer() {
+
+    removePrintLayer();
+
+    const layer =
+        document.createElement("div");
+
+    layer.id =
+        "samePagePrintLayer";
+
+    layer.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    document.body.appendChild(layer);
+
+    activePrintLayer = layer;
+
+    return layer;
+}
+
+
+/* =========================================================
+   REMOVE PRINT LAYER
+========================================================= */
+
+function removePrintLayer() {
+
+    const existing =
+        document.getElementById(
+            "samePagePrintLayer"
+        );
+
+    if (existing) {
+        existing.remove();
+    }
+
+    activePrintLayer = null;
+}
+
+
+/* =========================================================
+   IMAGE PRINT
+========================================================= */
+
+async function prepareImagePrintLayer(
+    printLayer,
+    file
+) {
+
+    const imageURL =
+        URL.createObjectURL(file);
+
+    try {
+
+        const image =
+            await loadImage(imageURL);
+
+        const page =
+            document.createElement(
+                "section"
+            );
+
+        page.className =
+            "print-page";
+
+        const printImage =
+            document.createElement("img");
+
+        printImage.className =
+            "print-content";
+
+        printImage.src =
+            image.src;
+
+        printImage.alt =
+            file.name;
+
+        const watermark =
+            createWatermark();
+
+        page.appendChild(
+            printImage
+        );
+
+        page.appendChild(
+            watermark
+        );
+
+        printLayer.appendChild(
+            page
+        );
+
+        await decodeImage(
+            printImage
+        );
+
+    } finally {
+
+        URL.revokeObjectURL(
+            imageURL
+        );
+    }
+}
+
+
+/* =========================================================
+   PDF PRINT
+========================================================= */
+
+async function preparePdfPrintLayer(
+    printLayer,
+    file
+) {
+
+    setPrintAnimationStatus(
+        "Loading PDF..."
+    );
+
+    const pdfjsLib =
+        await loadPdfJs();
+
+    const data =
+        new Uint8Array(
+            await file.arrayBuffer()
+        );
+
+    const pdf =
+        await pdfjsLib
+            .getDocument({
+                data
+            })
+            .promise;
+
+    /*
+     * Render EVERY PDF page.
+     */
+
+    for (
+        let pageNumber = 1;
+        pageNumber <= pdf.numPages;
+        pageNumber++
+    ) {
+
+        setPrintAnimationStatus(
+            "Preparing page " +
+            pageNumber +
+            " of " +
+            pdf.numPages +
+            "..."
+        );
+
+        const page =
+            await pdf.getPage(
+                pageNumber
+            );
+
+        const baseViewport =
+            page.getViewport({
+                scale: 1
+            });
+
+        const maxDimension =
+            1700;
+
+        const scale =
+            Math.min(
+                2.0,
+                maxDimension /
+                    Math.max(
+                        baseViewport.width,
+                        baseViewport.height
+                    )
+            );
+
+        const viewport =
+            page.getViewport({
+                scale:
+                    Math.max(
+                        1.35,
+                        scale
+                    )
+            });
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+        const context =
+            canvas.getContext(
+                "2d",
+                {
+                    alpha: false
+                }
+            );
+
+        canvas.width =
+            Math.ceil(
+                viewport.width
+            );
+
+        canvas.height =
+            Math.ceil(
+                viewport.height
+            );
+
+        await page.render({
+            canvasContext: context,
+            viewport: viewport
+        }).promise;
+
+        /*
+         * Convert rendered PDF page
+         * into printable image.
+         */
+
+        const imageData =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+        const pageElement =
+            document.createElement(
+                "section"
+            );
+
+        pageElement.className =
+            "print-page";
+
+        const image =
+            document.createElement(
+                "img"
+            );
+
+        image.className =
+            "print-content";
+
+        image.src =
+            imageData;
+
+        image.alt =
+            "PDF page " +
+            pageNumber;
+
+        const watermark =
+            createWatermark();
+
+        pageElement.appendChild(
+            image
+        );
+
+        pageElement.appendChild(
+            watermark
+        );
+
+        printLayer.appendChild(
+            pageElement
+        );
+
+        await decodeImage(
+            image
+        );
+
+        page.cleanup();
+
+        /*
+         * Release canvas memory.
+         */
+
+        canvas.width = 1;
+        canvas.height = 1;
+    }
+
+    setPrintAnimationStatus(
+        "All pages ready..."
+    );
+}
+
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+function createWatermark() {
+
+    const watermark =
+        document.createElement(
+            "div"
+        );
+
+    watermark.className =
+        "watermark";
+
+    watermark.textContent =
+        WATERMARK_TEXT;
+
+    return watermark;
+}
+
+
+/* =========================================================
+   PDF.JS
+========================================================= */
+
+let pdfJsPromise = null;
+
+function loadPdfJs() {
+
+    if (pdfJsPromise) {
+        return pdfJsPromise;
+    }
+
+    pdfJsPromise =
+        import(
+            "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.min.mjs"
+        )
+        .then((module) => {
+
+            const pdfjsLib =
+                module.default ||
+                module;
+
+            /*
+             * REQUIRED PDF.JS WORKER
+             */
+
+            pdfjsLib
+                .GlobalWorkerOptions
+                .workerSrc =
+                "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.min.mjs";
+
+            return pdfjsLib;
+        });
+
+    return pdfJsPromise;
+}
+
+
+/* =========================================================
+   AFTER PRINT
+========================================================= */
+
+window.addEventListener(
+    "afterprint",
+    function () {
+
+        removePrintLayer();
+
+        printBtn.disabled =
+            false;
+    }
+);
