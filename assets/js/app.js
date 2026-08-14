@@ -1,24 +1,27 @@
-const browseBtn = document.getElementById("browseBtn");
+
 const fileInput = document.getElementById("fileInput");
+
 const fileInfo = document.getElementById("fileInfo");
 const fileName = document.getElementById("fileName");
 const fileType = document.getElementById("fileType");
 
-fileInput.addEventListener("change", () => {
-
-    const file = fileInput.files[0];
-
-    if (!file) return;
 const processing = document.getElementById("processing");
 
-processing.style.display = "block";
+fileInput.addEventListener("change", function () {
 
-setTimeout(() => {
-    processing.style.display = "none";
-}, 1500);
+    const file = this.files[0];
+
+    if (!file) return;
+
     fileName.textContent = file.name;
-    fileType.textContent = file.type || "Unknown file type";
+    fileType.textContent = file.type || "File";
 
     fileInfo.style.display = "block";
-});
 
+    processing.style.display = "block";
+
+    setTimeout(function () {
+        processing.style.display = "none";
+    }, 1500);
+
+});
