@@ -1,251 +1,248 @@
-document.addEventListener("DOMContentLoaded", function () {
+const fileInput = document.getElementById("fileInput");
+const fileInfo = document.getElementById("fileInfo");
+const previewArea = document.getElementById("previewArea");
 
-    const fileInput = document.getElementById("fileInput");
-    const fileInfo = document.getElementById("fileInfo");
-    const previewArea = document.getElementById("previewArea");
-    const removeBtn = document.getElementById("removeBtn");
-    const printBtn = document.getElementById("printBtn");
-
-    let selectedFile = null;
-    let previewURL = null;
+const fileActions = document.getElementById("fileActions");
+const removeBtn = document.getElementById("removeBtn");
+const printBtn = document.getElementById("printBtn");
 
 
-    // ==============================
-    // FILE SELECT
-    // ==============================
+/* =========================
+   INITIAL STATE
+========================= */
 
-    fileInput.addEventListener("change", function () {
-
-        const file = this.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        selectedFile = file;
-
-        showFileInfo(file);
-        showPreview(file);
-
-        removeBtn.style.display = "block";
-        printBtn.style.display = "block";
-    });
+fileActions.style.display = "none";
 
 
-    // ==============================
-    // FILE INFORMATION
-    // ==============================
+/* =========================
+   FILE SELECT
+========================= */
 
-    function showFileInfo(file) {
+fileInput.addEventListener("change", function () {
 
-        fileInfo.innerHTML = `
-            <div class="file-info-box">
-                <strong>File:</strong> ${escapeHTML(file.name)}
-                <span>|</span>
-                <strong>Type:</strong> ${escapeHTML(file.type || "Unknown")}
-            </div>
-        `;
+    const file = fileInput.files[0];
+
+    if (!file) {
+        clearFile();
+        return;
+    }
+
+    displayFile(file);
+
+});
+
+
+/* =========================
+   DISPLAY FILE
+========================= */
+
+function displayFile(file) {
+
+    fileInfo.style.display = "block";
+
+    fileInfo.textContent =
+        "File: " +
+        file.name +
+        " | Type: " +
+        (file.type || "File");
+
+
+    previewArea.innerHTML = "";
+
+
+    /* IMAGE */
+
+    if (file.type.startsWith("image/")) {
+
+        const image = document.createElement("img");
+
+        image.src = URL.createObjectURL(file);
+
+        image.alt = file.name;
+
+        previewArea.appendChild(image);
+
     }
 
 
-    // ==============================
-    // PREVIEW
-    // ==============================
+    /* SHOW ACTION BUTTONS */
 
-    function showPreview(file) {
+    fileActions.style.display = "flex";
 
-        previewArea.innerHTML = "";
-
-        if (previewURL) {
-            URL.revokeObjectURL(previewURL);
-            previewURL = null;
-        }
+}
 
 
-        // IMAGE PREVIEW
-        if (file.type.startsWith("image/")) {
+/* =========================
+   REMOVE FILE
+========================= */
 
-            previewURL = URL.createObjectURL(file);
+removeBtn.addEventListener("click", function (event) {
 
-            const img = document.createElement("img");
+    event.preventDefault();
 
-            img.src = previewURL;
-            img.alt = "File Preview";
-            img.className = "preview-image";
+    fileInput.value = "";
 
-            previewArea.appendChild(img);
+    clearFile();
 
-            return;
-        }
+});
 
 
-        // PDF PREVIEW
-        if (file.type === "application/pdf") {
+function clearFile() {
 
-            previewURL = URL.createObjectURL(file);
+    fileInfo.textContent = "";
 
-            const iframe = document.createElement("iframe");
+    fileInfo.style.display = "none";
 
-            iframe.src = previewURL;
-            iframe.className = "preview-pdf";
-            iframe.title = "PDF Preview";
+    previewArea.innerHTML = "";
 
-            previewArea.appendChild(iframe);
+    fileActions.style.display = "none";
 
-            return;
-        }
+}
 
 
-        // OTHER FILE
-        previewArea.innerHTML = `
-            <div class="unsupported-preview">
-                <p>Preview is not available for this file.</p>
-                <p>${escapeHTML(file.name)}</p>
-            </div>
-        `;
+/* =========================
+   PRINT FILE
+========================= */
+
+printBtn.addEventListener("click", function (event) {
+
+    event.preventDefault();
+
+    const file = fileInput.files[0];
+
+    if (!file) {
+
+        alert("Please select a file first.");
+
+        return;
     }
 
 
-    // ==============================
-    // REMOVE FILE
-    // ==============================
+    /* IMAGE PRINT */
 
-    removeBtn.addEventListener("click", function () {
+    if (file.type.startsWith("image/")) {
 
-        selectedFile = null;
+        const imageURL = URL.createObjectURL(file);
 
-        fileInput.value = "";
-
-        fileInfo.innerHTML = "";
-        previewArea.innerHTML = "";
-
-        removeBtn.style.display = "none";
-        printBtn.style.display = "none";
-
-        if (previewURL) {
-            URL.revokeObjectURL(previewURL);
-            previewURL = null;
-        }
-    });
+        const printWindow = window.open(
+            "",
+            "_blank",
+            "width=900,height=700"
+        );
 
 
-    // ==============================
-    // PRINT
-    // ==============================
+        if (!printWindow) {
 
-    printBtn.addEventListener("click", function () {
+            alert(
+                "Popup blocked. Please allow popups for this website."
+            );
 
-        if (!selectedFile) {
-            alert("Please select a file first.");
+            URL.revokeObjectURL(imageURL);
+
             return;
         }
 
-        if (selectedFile.type.startsWith("image/")) {
 
-            const imageURL = URL.createObjectURL(selectedFile);
+        printWindow.document.open();
 
-            const printWindow = window.open("", "_blank");
+        printWindow.document.write(`
+            <!DOCTYPE html>
 
-            if (!printWindow) {
-                alert("Please allow pop-ups to print the file.");
-                URL.revokeObjectURL(imageURL);
-                return;
-            }
+            <html>
 
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Print - ${escapeHTML(selectedFile.name)}</title>
+            <head>
 
-                    <style>
+                <title>${file.name}</title>
 
-                        @page {
-                            margin: 10mm;
-                        }
+                <style>
 
-                        * {
-                            box-sizing: border-box;
-                        }
+                    * {
+                        box-sizing: border-box;
+                    }
 
-                        html,
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                        background: white;
+                        text-align: center;
+                    }
+
+                    img {
+                        max-width: 100%;
+                        max-height: 95vh;
+                        object-fit: contain;
+                    }
+
+                    @media print {
+
                         body {
-                            margin: 0;
                             padding: 0;
-                            background: white;
-                        }
-
-                        body {
-                            display: flex;
-                            justify-content: center;
-                            align-items: flex-start;
-                            padding: 10mm;
                         }
 
                         img {
                             max-width: 100%;
                             max-height: 100vh;
-                            object-fit: contain;
                         }
 
-                    </style>
-                </head>
+                    }
 
-                <body>
+                </style>
 
-                    <img
-                        src="${imageURL}"
-                        onload="window.print();"
-                    >
+            </head>
 
-                </body>
-                </html>
-            `);
+            <body>
 
-            printWindow.document.close();
+                <img src="${imageURL}" alt="Print Preview">
 
-            return;
-        }
+                <script>
 
+                    window.onload = function () {
 
-        // PDF PRINT
-        if (selectedFile.type === "application/pdf") {
+                        setTimeout(function () {
 
-            const pdfURL = URL.createObjectURL(selectedFile);
+                            window.print();
 
-            const printWindow = window.open(pdfURL, "_blank");
+                        }, 300);
 
-            if (!printWindow) {
-                alert("Please allow pop-ups to print the PDF.");
-            }
+                    };
 
-            return;
-        }
+                <\/script>
 
+            </body>
 
-        alert("Printing this file type is not supported yet.");
-    });
+            </html>
+        `);
 
+        printWindow.document.close();
 
-    // ==============================
-    // HTML ESCAPE
-    // ==============================
-
-    function escapeHTML(text) {
-
-        const div = document.createElement("div");
-
-        div.textContent = text;
-
-        return div.innerHTML;
+        return;
     }
 
 
-    // ==============================
-    // INITIAL STATE
-    // ==============================
+    /* PDF */
 
-    removeBtn.style.display = "none";
-    printBtn.style.display = "none";
+    if (file.type === "application/pdf") {
+
+        const pdfURL = URL.createObjectURL(file);
+
+        const pdfWindow = window.open(
+            pdfURL,
+            "_blank"
+        );
+
+
+        if (!pdfWindow) {
+
+            alert(
+                "Popup blocked. Please allow popups for this website."
+            );
+
+        }
+
+        return;
+    }
+
+
+    alert("This file type is not supported for printing.");
 
 });
