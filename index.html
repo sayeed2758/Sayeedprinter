@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -16,7 +15,6 @@
         rel="stylesheet"
         href="assets/css/style.css"
     >
-
 </head>
 
 <body>
@@ -83,9 +81,60 @@
 
     </main>
 
+    <!-- PRINT ANIMATION -->
+    <div
+        id="printAnimation"
+        class="print-animation-overlay"
+        aria-hidden="true"
+    >
+        <div class="print-animation-card">
+
+            <div class="print-animation-title">
+                <span id="printAnimationTitle">Preparing print</span>
+            </div>
+
+            <div class="print-animation-subtitle">
+                <span id="printAnimationSubtitle">
+                    Your document is being prepared
+                </span>
+            </div>
+
+            <div class="printer-scene">
+
+                <div class="printer-roll">
+                    <div class="roll-highlight"></div>
+                    <div class="roll-shadow"></div>
+                </div>
+
+                <div class="paper-track">
+                    <div
+                        id="animationPaper"
+                        class="animation-paper"
+                    >
+                        <div class="paper-inner">
+                            <div class="paper-line short"></div>
+                            <div class="paper-line"></div>
+                            <div class="paper-line"></div>
+                            <div class="paper-line medium"></div>
+                            <div class="paper-line"></div>
+                            <div class="paper-line short"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div
+                id="printAnimationStatus"
+                class="print-animation-status"
+            >
+                Starting printer...
+            </div>
+
+        </div>
+    </div>
+
     <script src="assets/js/app.js"></script>
 
 </body>
-
 </html>
-
