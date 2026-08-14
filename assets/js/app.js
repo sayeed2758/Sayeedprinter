@@ -1,17 +1,14 @@
 const fileInput = document.getElementById("fileInput");
+
 const fileInfo = document.getElementById("fileInfo");
+
 const previewArea = document.getElementById("previewArea");
 
 const fileActions = document.getElementById("fileActions");
+
 const removeBtn = document.getElementById("removeBtn");
+
 const printBtn = document.getElementById("printBtn");
-
-
-/* =========================
-   INITIAL STATE
-========================= */
-
-fileActions.style.display = "none";
 
 
 /* =========================
@@ -20,23 +17,23 @@ fileActions.style.display = "none";
 
 fileInput.addEventListener("change", function () {
 
-    const file = fileInput.files[0];
+    const file = this.files[0];
 
     if (!file) {
-        clearFile();
+        resetFile();
         return;
     }
 
-    displayFile(file);
+    showFile(file);
 
 });
 
 
 /* =========================
-   DISPLAY FILE
+   SHOW FILE
 ========================= */
 
-function displayFile(file) {
+function showFile(file) {
 
     fileInfo.style.display = "block";
 
@@ -50,7 +47,7 @@ function displayFile(file) {
     previewArea.innerHTML = "";
 
 
-    /* IMAGE */
+    /* IMAGE PREVIEW */
 
     if (file.type.startsWith("image/")) {
 
@@ -58,14 +55,16 @@ function displayFile(file) {
 
         image.src = URL.createObjectURL(file);
 
-        image.alt = file.name;
+        image.onload = function () {
+            URL.revokeObjectURL(image.src);
+        };
 
         previewArea.appendChild(image);
 
     }
 
 
-    /* SHOW ACTION BUTTONS */
+    /* ACTION BUTTONS */
 
     fileActions.style.display = "flex";
 
@@ -76,18 +75,16 @@ function displayFile(file) {
    REMOVE FILE
 ========================= */
 
-removeBtn.addEventListener("click", function (event) {
+removeBtn.addEventListener("click", function () {
 
-    event.preventDefault();
-
-    fileInput.value = "";
-
-    clearFile();
+    resetFile();
 
 });
 
 
-function clearFile() {
+function resetFile() {
+
+    fileInput.value = "";
 
     fileInfo.textContent = "";
 
@@ -101,19 +98,14 @@ function clearFile() {
 
 
 /* =========================
-   PRINT FILE
+   PRINT
 ========================= */
 
-printBtn.addEventListener("click", function (event) {
-
-    event.preventDefault();
+printBtn.addEventListener("click", function () {
 
     const file = fileInput.files[0];
 
     if (!file) {
-
-        alert("Please select a file first.");
-
         return;
     }
 
@@ -124,92 +116,55 @@ printBtn.addEventListener("click", function (event) {
 
         const imageURL = URL.createObjectURL(file);
 
-        const printWindow = window.open(
-            "",
-            "_blank",
-            "width=900,height=700"
-        );
-
+        const printWindow = window.open("", "_blank");
 
         if (!printWindow) {
-
-            alert(
-                "Popup blocked. Please allow popups for this website."
-            );
-
-            URL.revokeObjectURL(imageURL);
-
+            alert("Please allow pop-ups to print the file.");
             return;
         }
 
-
-        printWindow.document.open();
-
         printWindow.document.write(`
             <!DOCTYPE html>
-
             <html>
-
             <head>
-
-                <title>${file.name}</title>
+                <title>Print - ${file.name}</title>
 
                 <style>
-
-                    * {
-                        box-sizing: border-box;
-                    }
-
                     body {
                         margin: 0;
                         padding: 20px;
-                        background: white;
                         text-align: center;
+                        background: white;
                     }
 
                     img {
                         max-width: 100%;
-                        max-height: 95vh;
-                        object-fit: contain;
+                        height: auto;
                     }
 
                     @media print {
-
                         body {
                             padding: 0;
                         }
 
                         img {
                             max-width: 100%;
-                            max-height: 100vh;
                         }
-
                     }
-
                 </style>
-
             </head>
 
             <body>
 
-                <img src="${imageURL}" alt="Print Preview">
+                <img src="${imageURL}">
 
                 <script>
-
                     window.onload = function () {
-
-                        setTimeout(function () {
-
-                            window.print();
-
-                        }, 300);
-
+                        window.print();
                     };
-
                 <\/script>
 
             </body>
-
             </html>
         `);
 
@@ -219,30 +174,22 @@ printBtn.addEventListener("click", function (event) {
     }
 
 
-    /* PDF */
+    /* PDF PRINT */
 
     if (file.type === "application/pdf") {
 
         const pdfURL = URL.createObjectURL(file);
 
-        const pdfWindow = window.open(
-            pdfURL,
-            "_blank"
-        );
+        const printWindow = window.open(pdfURL, "_blank");
 
-
-        if (!pdfWindow) {
-
-            alert(
-                "Popup blocked. Please allow popups for this website."
-            );
-
+        if (!printWindow) {
+            alert("Please allow pop-ups to print the PDF.");
         }
 
         return;
     }
 
 
-    alert("This file type is not supported for printing.");
+    alert("This file type cannot be printed directly.");
 
 });
