@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
@@ -22,99 +23,28 @@
 
     <main id="app">
 
-        <section class="upload-section">
+        <h1>Sayeed Print Studio</h1>
 
-            <div class="brand">
+        <p>Upload • Preview • Print</p>
 
-                <h1>Sayeed Print Studio</h1>
+        <div id="uploadBox">
 
-                <p>
-                    Upload • Preview • Print
-                </p>
-
-            </div>
-
-
-            <div
-                class="upload-box"
-                id="uploadBox"
+            <input
+                type="file"
+                id="fileInput"
+                accept="image/*,.pdf"
             >
 
-                <div class="upload-icon">
-                    ↑
-                </div>
+            <div id="fileInfo"></div>
 
+            <div id="previewArea"></div>
 
-                <h2>
-                    Upload Your File
-                </h2>
-
-
-                <p>
-                    Drop your PDF, photo or file here
-                </p>
-
-
-                <input
-                    type="file"
-                    id="fileInput"
-                    accept="image/*,.pdf"
-                    hidden
-                >
-
-
-                <label
-                    for="fileInput"
-                    class="browse-btn"
-                >
-                    Browse File
-                </label>
-
-
-                <div
-                    class="file-info"
-                    id="fileInfo"
-                >
-
-                    <div
-                        class="preview-area"
-                        id="previewArea"
-                    ></div>
-
-
-                    <strong id="fileName"></strong>
-
-                    <span id="fileType"></span>
-
-                </div>
-
-
-                <small>
-                    PDF • JPG • PNG • WEBP
-                </small>
-
-            </div>
-
-
-            <div
-                class="processing"
-                id="processing"
-            >
-
-                <div class="loader"></div>
-
-                <p>
-                    Preparing your file...
-                </p>
-
-            </div>
-
-        </section>
+        </div>
 
     </main>
-
 
     <script src="assets/js/app.js"></script>
 
 </body>
+
 </html>
