@@ -15,3 +15,66 @@ body {
     min-height: 100vh;
     padding: 30px 20px;
 }
+.upload-section {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.brand {
+    margin-bottom: 35px;
+}
+
+.brand h1 {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.brand p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+.upload-box {
+    padding: 55px 25px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 24px;
+    background: #ffffff;
+}
+
+.upload-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.upload-box h2 {
+    margin-bottom: 10px;
+}
+
+.upload-box p {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.browse-btn {
+    border: 0;
+    padding: 13px 28px;
+    border-radius: 12px;
+    background: #4f46e5;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.upload-box small {
+    display: block;
+    margin-top: 18px;
+    color: #94a3b8;
+}
