@@ -466,10 +466,8 @@ async function preparePdfPrint(printWindow, file) {
     );
 
     const pdf = await pdfjsLib.getDocument({
-        data,
-        wasmUrl:
-            "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/wasm/"
-    }).promise;
+    data
+}).promise;
 
     const renderedPages = [];
 
@@ -550,14 +548,24 @@ function loadPdfJs() {
     pdfJsPromise = import(
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.min.mjs"
     ).then((module) => {
+
         const pdfjsLib =
             module.default || module;
+
+        /*
+         * IMPORTANT:
+         * PDF.js needs its worker file to render PDF pages.
+         */
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.min.mjs";
 
         return pdfjsLib;
     });
 
     return pdfJsPromise;
 }
+
+
 
 /* =========================
    WRITE PDF PRINT DOCUMENT
