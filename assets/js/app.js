@@ -68,3 +68,33 @@ uploadBox.addEventListener("drop", (e) => {
 
     fileInput.dispatchEvent(new Event("change"));
 });
+async function showPDF(file) {
+
+    const pdf = await pdfjsLib.getDocument({
+        data: await file.arrayBuffer()
+    }).promise;
+
+    previewArea.innerHTML = "";
+
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+
+        const page = await pdf.getPage(pageNumber);
+
+        const viewport = page.getViewport({
+            scale: 1.2
+        });
+
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        previewArea.appendChild(canvas);
+
+        await page.render({
+            canvasContext: context,
+            viewport: viewport
+        }).promise;
+    }
+}
