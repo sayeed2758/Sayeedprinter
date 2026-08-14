@@ -2,6 +2,7 @@
     box-sizing: border-box;
 }
 
+
 body {
     margin: 0;
     min-height: 100vh;
@@ -26,7 +27,7 @@ body {
 
 
 /* =========================
-   BRAND
+   HEADER
 ========================= */
 
 #app h1 {
@@ -36,6 +37,7 @@ body {
 
     line-height: 1.15;
 }
+
 
 #app > p {
     margin: 0 0 50px;
@@ -54,7 +56,7 @@ body {
 
     padding: 70px 30px;
 
-    background: white;
+    background: #ffffff;
 
     border: 2px dashed #cbd5e1;
 
@@ -65,6 +67,7 @@ body {
         box-shadow 0.3s ease,
         border-color 0.3s ease;
 }
+
 
 #uploadBox:hover {
 
@@ -78,14 +81,14 @@ body {
 
 
 /* =========================
-   UPLOAD ICON
+   ICON
 ========================= */
 
 .upload-icon {
 
-    font-size: 28px;
-
     margin-bottom: 25px;
+
+    font-size: 28px;
 
     color: #111827;
 }
@@ -101,6 +104,7 @@ body {
 
     font-size: 32px;
 }
+
 
 .upload-text {
 
@@ -136,7 +140,7 @@ body {
 
     background: #4f46e5;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 17px;
 
@@ -147,6 +151,7 @@ body {
         box-shadow 0.2s ease;
 }
 
+
 .browse-btn:hover {
 
     transform: translateY(-2px);
@@ -155,6 +160,7 @@ body {
         0 10px 25px rgba(79, 70, 229, 0.25);
 }
 
+
 .browse-btn:active {
 
     transform: scale(0.96);
@@ -162,12 +168,14 @@ body {
 
 
 /* =========================
-   FILE INFORMATION
+   FILE INFO
 ========================= */
 
 #fileInfo {
 
     display: none;
+
+    width: 100%;
 
     margin-top: 25px;
 
@@ -191,6 +199,7 @@ body {
 
     margin-top: 25px;
 }
+
 
 #previewArea img {
 
@@ -220,6 +229,8 @@ body {
 
     justify-content: center;
 
+    align-items: center;
+
     gap: 12px;
 
     margin-top: 25px;
@@ -230,13 +241,25 @@ body {
 
 .file-actions button {
 
-    border: none;
+    display: inline-flex;
 
-    padding: 13px 24px;
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 130px;
+
+    padding: 13px 22px;
+
+    border: none;
 
     border-radius: 12px;
 
+    font-family: Arial, sans-serif;
+
     font-size: 16px;
+
+    font-weight: 600;
 
     cursor: pointer;
 
@@ -246,7 +269,9 @@ body {
 }
 
 
-/* REMOVE */
+/* =========================
+   REMOVE
+========================= */
 
 .remove-btn {
 
@@ -254,6 +279,7 @@ body {
 
     color: #b91c1c;
 }
+
 
 .remove-btn:hover {
 
@@ -264,14 +290,23 @@ body {
 }
 
 
-/* PRINT */
+.remove-btn:active {
+
+    transform: scale(0.96);
+}
+
+
+/* =========================
+   PRINT
+========================= */
 
 .print-btn {
 
     background: #4f46e5;
 
-    color: white;
+    color: #ffffff;
 }
+
 
 .print-btn:hover {
 
@@ -279,6 +314,12 @@ body {
 
     box-shadow:
         0 8px 20px rgba(79, 70, 229, 0.25);
+}
+
+
+.print-btn:active {
+
+    transform: scale(0.96);
 }
 
 
@@ -293,37 +334,44 @@ body {
         padding: 55px 16px;
     }
 
+
     #app h1 {
 
         font-size: 38px;
     }
 
+
     #app > p {
 
-        font-size: 18px;
-
         margin-bottom: 35px;
+
+        font-size: 18px;
     }
+
 
     #uploadBox {
 
         padding: 55px 20px;
     }
 
+
     #uploadBox h2 {
 
         font-size: 28px;
     }
+
 
     .upload-text {
 
         font-size: 17px;
     }
 
+
     .file-actions {
 
         flex-direction: column;
     }
+
 
     .file-actions button {
 
