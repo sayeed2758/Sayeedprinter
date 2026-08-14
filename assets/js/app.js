@@ -1,21 +1,18 @@
 const fileInput = document.getElementById("fileInput");
 const fileInfo = document.getElementById("fileInfo");
-const fileName = document.getElementById("fileName");
-const fileType = document.getElementById("fileType");
 const previewArea = document.getElementById("previewArea");
 
 fileInput.addEventListener("change", function () {
 
-    const file = fileInput.files[0];
+    const file = this.files[0];
 
-    if (!file) {
-        return;
-    }
-
-    fileName.textContent = file.name;
-    fileType.textContent = file.type;
+    if (!file) return;
 
     fileInfo.style.display = "block";
+
+    fileInfo.textContent =
+        "File: " + file.name +
+        " | Type: " + file.type;
 
     previewArea.innerHTML = "";
 
