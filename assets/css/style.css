@@ -64,6 +64,7 @@ body {
 }
 
 .browse-btn {
+    display: inline-block;
     border: 0;
     padding: 13px 28px;
     border-radius: 12px;
