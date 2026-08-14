@@ -1,232 +1,235 @@
-document.addEventListener("DOMContentLoaded", () => {
+const fileInput = document.getElementById("fileInput");
 
-    const fileInput = document.getElementById("fileInput");
-    const fileInfo = document.getElementById("fileInfo");
-    const previewArea = document.getElementById("previewArea");
-    const removeBtn = document.getElementById("removeBtn");
-    const printBtn = document.getElementById("printBtn");
+const fileInfo = document.getElementById("fileInfo");
 
-    let currentFile = null;
-    let currentURL = null;
+const previewArea = document.getElementById("previewArea");
+
+const fileActions = document.getElementById("fileActions");
+
+const removeBtn = document.getElementById("removeBtn");
+
+const printBtn = document.getElementById("printBtn");
 
 
-    /* ================================
-       FILE SELECT
-    ================================= */
+/* =========================
+   FILE SELECT
+========================= */
 
-    fileInput.addEventListener("change", function () {
+fileInput.addEventListener("change", function () {
 
-        const file = this.files && this.files[0];
+    const file = this.files[0];
 
-        if (!file) {
-            return;
-        }
+    if (!file) {
+        resetFile();
+        return;
+    }
 
-        currentFile = file;
+    showFile(file);
 
-        // Remove previous preview URL
-        if (currentURL) {
-            URL.revokeObjectURL(currentURL);
-        }
+});
 
-        currentURL = URL.createObjectURL(file);
 
-        // File information
-        fileInfo.innerHTML = `
-            File: ${escapeHTML(file.name)}
-            <span>|</span>
-            Type: ${escapeHTML(file.type || "Unknown")}
+/* =========================
+   SHOW FILE
+========================= */
+
+function showFile(file) {
+
+    fileInfo.style.display = "block";
+
+    fileInfo.textContent =
+        "File: " +
+        file.name +
+        " | Type: " +
+        (file.type || "File");
+
+
+    previewArea.innerHTML = "";
+
+
+    /* =========================
+       IMAGE PREVIEW
+    ========================= */
+
+    if (file.type.startsWith("image/")) {
+
+        const image = document.createElement("img");
+
+        image.src = URL.createObjectURL(file);
+
+        image.onload = function () {
+            URL.revokeObjectURL(image.src);
+        };
+
+        previewArea.appendChild(image);
+
+    }
+
+
+    /* =========================
+       PDF PREVIEW
+    ========================= */
+
+    else if (file.type === "application/pdf") {
+
+        const pdfURL = URL.createObjectURL(file);
+
+        const pdfFrame = document.createElement("iframe");
+
+        pdfFrame.src = pdfURL;
+
+        pdfFrame.title = "PDF Preview";
+
+        pdfFrame.className = "pdf-preview";
+
+        previewArea.appendChild(pdfFrame);
+
+    }
+
+
+    /* =========================
+       UNSUPPORTED FILE
+    ========================= */
+
+    else {
+
+        previewArea.innerHTML = `
+            <div class="unsupported-file">
+                This file type cannot be previewed.
+            </div>
         `;
 
-        previewArea.innerHTML = "";
-
-        /* IMAGE */
-        if (file.type.startsWith("image/")) {
-
-            const img = document.createElement("img");
-
-            img.src = currentURL;
-            img.alt = "Selected file preview";
-
-            img.style.width = "100%";
-            img.style.height = "auto";
-            img.style.maxHeight = "600px";
-            img.style.objectFit = "contain";
-            img.style.display = "block";
-            img.style.borderRadius = "18px";
-
-            previewArea.appendChild(img);
-        }
-
-        /* PDF */
-        else if (file.type === "application/pdf") {
-
-            const iframe = document.createElement("iframe");
-
-            iframe.src = currentURL;
-            iframe.title = "PDF Preview";
-
-            iframe.style.width = "100%";
-            iframe.style.height = "500px";
-            iframe.style.border = "1px solid #aaa";
-            iframe.style.borderRadius = "12px";
-            iframe.style.background = "#fff";
-
-            previewArea.appendChild(iframe);
-        }
-
-        /* OTHER FILE */
-        else {
-
-            previewArea.innerHTML = `
-                <div style="
-                    padding:40px 20px;
-                    text-align:center;
-                    background:#f5f7fb;
-                    border-radius:16px;
-                    font-size:18px;
-                ">
-                    <strong>File selected</strong>
-                    <br><br>
-                    ${escapeHTML(file.name)}
-                </div>
-            `;
-        }
-
-        // Show buttons
-        removeBtn.style.display = "block";
-        printBtn.style.display = "block";
-    });
+    }
 
 
-    /* ================================
-       REMOVE FILE
-    ================================= */
+    /* =========================
+       ACTION BUTTONS
+    ========================= */
 
-    removeBtn.addEventListener("click", () => {
+    fileActions.style.display = "flex";
 
-        fileInput.value = "";
-
-        currentFile = null;
-
-        if (currentURL) {
-            URL.revokeObjectURL(currentURL);
-            currentURL = null;
-        }
-
-        fileInfo.innerHTML = "";
-
-        previewArea.innerHTML = "";
-
-        removeBtn.style.display = "none";
-        printBtn.style.display = "none";
-    });
+}
 
 
-    /* ================================
-       PRINT
-    ================================= */
+/* =========================
+   REMOVE FILE
+========================= */
 
-    printBtn.addEventListener("click", () => {
+removeBtn.addEventListener("click", function () {
 
-        if (!currentFile || !currentURL) {
-            alert("Please select a file first.");
+    resetFile();
+
+});
+
+
+function resetFile() {
+
+    fileInput.value = "";
+
+    fileInfo.textContent = "";
+
+    fileInfo.style.display = "none";
+
+    previewArea.innerHTML = "";
+
+    fileActions.style.display = "none";
+
+}
+
+
+/* =========================
+   PRINT
+========================= */
+
+printBtn.addEventListener("click", function () {
+
+    const file = fileInput.files[0];
+
+    if (!file) {
+        return;
+    }
+
+
+    /* IMAGE PRINT */
+
+    if (file.type.startsWith("image/")) {
+
+        const imageURL = URL.createObjectURL(file);
+
+        const printWindow = window.open("", "_blank");
+
+        if (!printWindow) {
+            alert("Please allow pop-ups to print the file.");
             return;
         }
 
-        /* IMAGE PRINT */
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print - ${file.name}</title>
 
-        if (currentFile.type.startsWith("image/")) {
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                        text-align: center;
+                        background: white;
+                    }
 
-            const printWindow = window.open(
-                "",
-                "_blank",
-                "width=900,height=700"
-            );
+                    img {
+                        max-width: 100%;
+                        height: auto;
+                    }
 
-            if (!printWindow) {
-                alert("Please allow pop-ups for printing.");
-                return;
-            }
-
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Print - ${escapeHTML(currentFile.name)}</title>
-
-                    <style>
-                        @page {
-                            size: A4;
-                            margin: 10mm;
-                        }
-
-                        html,
+                    @media print {
                         body {
-                            margin: 0;
                             padding: 0;
-                            background: white;
-                            text-align: center;
                         }
 
                         img {
                             max-width: 100%;
-                            max-height: 277mm;
-                            object-fit: contain;
                         }
-                    </style>
-                </head>
+                    }
+                </style>
+            </head>
 
-                <body>
+            <body>
 
-                    <img
-                        src="${currentURL}"
-                        onload="window.print();"
-                    >
+                <img src="${imageURL}">
 
-                </body>
-                </html>
-            `);
+                <script>
+                    window.onload = function () {
+                        window.print();
+                    };
+                <\/script>
 
-            printWindow.document.close();
+            </body>
+            </html>
+        `);
 
-            return;
-        }
+        printWindow.document.close();
 
-
-        /* PDF PRINT */
-
-        if (currentFile.type === "application/pdf") {
-
-            const pdfWindow = window.open(
-                currentURL,
-                "_blank"
-            );
-
-            if (!pdfWindow) {
-                alert("Please allow pop-ups for printing.");
-                return;
-            }
-
-            return;
-        }
-
-
-        alert("This file type cannot be printed directly.");
-    });
-
-
-    /* ================================
-       SAFE TEXT
-    ================================= */
-
-    function escapeHTML(text) {
-
-        const div = document.createElement("div");
-
-        div.textContent = text;
-
-        return div.innerHTML;
+        return;
     }
+
+
+    /* PDF PRINT */
+
+    if (file.type === "application/pdf") {
+
+        const pdfURL = URL.createObjectURL(file);
+
+        const printWindow = window.open(pdfURL, "_blank");
+
+        if (!printWindow) {
+            alert("Please allow pop-ups to print the PDF.");
+        }
+
+        return;
+    }
+
+
+    alert("This file type cannot be printed directly.");
 
 });
