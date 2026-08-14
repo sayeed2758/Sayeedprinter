@@ -15,11 +15,18 @@ body {
     min-height: 100vh;
     padding: 30px 20px;
 }
+
+
+/* Upload Section */
+
 .upload-section {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
 }
+
+
+/* Brand */
 
 .brand {
     margin-bottom: 35px;
@@ -35,24 +42,44 @@ body {
     font-size: 16px;
 }
 
+
+/* Upload Box */
+
 .upload-box {
     padding: 55px 25px;
     border: 2px dashed #cbd5e1;
     border-radius: 24px;
     background: #ffffff;
+    transition: 0.2s ease;
 }
+
+.upload-box.dragging {
+    border-color: #4f46e5;
+    background: #eef2ff;
+    transform: scale(1.01);
+}
+
+
+/* Upload Icon */
 
 .upload-icon {
     width: 70px;
     height: 70px;
     margin: 0 auto 20px;
+
     border-radius: 50%;
+
     background: #eef2ff;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-size: 32px;
 }
+
+
+/* Text */
 
 .upload-box h2 {
     margin-bottom: 10px;
@@ -63,104 +90,171 @@ body {
     margin-bottom: 25px;
 }
 
+
+/* Browse Button */
+
 .browse-btn {
     display: inline-block;
+
     border: 0;
+
     padding: 13px 28px;
+
     border-radius: 12px;
+
     background: #4f46e5;
-    color: white;
+
+    color: #ffffff;
+
     font-size: 16px;
+
     cursor: pointer;
+
+    transition: 0.2s ease;
 }
+
+.browse-btn:hover {
+    transform: translateY(-1px);
+}
+
+
+/* Supported Formats */
 
 .upload-box small {
     display: block;
+
     margin-top: 18px;
+
     color: #94a3b8;
 }
+
+
+/* File Information */
+
+.file-info {
+    display: none;
+
+    width: 100%;
+
+    margin: 20px auto 0;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: #f1f5f9;
+
+    text-align: center;
+}
+
+.file-info strong {
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.file-info span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* Image Preview */
+
+.preview-area {
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 15px;
+}
+
+.preview-area img {
+    display: block;
+
+    width: 100%;
+
+    max-height: 300px;
+
+    object-fit: contain;
+
+    border-radius: 14px;
+}
+
+
+/* Processing */
+
 .processing {
     display: none;
+
     margin-top: 25px;
+
     text-align: center;
 }
 
 .loader {
     width: 42px;
     height: 42px;
+
     margin: 0 auto 12px;
+
     border: 4px solid #e2e8f0;
+
     border-top-color: #4f46e5;
+
     border-radius: 50%;
+
     animation: spin 0.8s linear infinite;
 }
 
 .processing p {
     color: #64748b;
+
     font-size: 14px;
 }
 
+
+/* Animation */
+
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
-}
-.file-info {
-    display: none;
-    width: 100%;
-    margin: 20px auto 0;
-    padding: 14px;
-    border-radius: 14px;
-    background: #f1f5f9;
-    text-align: center;
+
 }
 
-.file-info strong {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
-.file-info span {
-    display: block;
-    margin-top: 5px;
-    color: #64748b;
-    font-size: 13px;
-}
-.preview-area {
-    margin-bottom: 12px;
-}
+/* Mobile */
 
-.preview-area img {
-    display: block;
-    width: 100%;
-    max-height: 280px;
-    object-fit: contain;
-    border-radius: 12px;
-}
-.preview-area {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 15px;
-}
+@media (max-width: 600px) {
 
-.preview-area img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: 14px;
-}
-.upload-box.dragging {
-    border-color: #4f46e5;
-    background: #eef2ff;
-    transform: scale(1.01);
-}
-.preview-area canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin: 0 auto 18px;
-    border-radius: 10px;
-    background: white;
+    #app {
+        padding: 20px 14px;
+    }
+
+    .brand h1 {
+        font-size: 32px;
+    }
+
+    .upload-box {
+        padding: 40px 18px;
+    }
+
+    .upload-icon {
+        width: 60px;
+        height: 60px;
+
+        font-size: 28px;
+    }
+
 }
