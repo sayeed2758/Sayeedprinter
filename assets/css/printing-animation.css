@@ -1,0 +1,482 @@
+/* =========================================
+   SAYEED PRINT STUDIO
+   PRINTING ANIMATION
+   Phase 1
+   Made By Shahid Sir
+   ========================================= */
+
+.print-animation-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(248, 249, 252, 0.96);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+
+    overflow: hidden;
+}
+
+.print-animation-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Main animation area */
+
+.print-animation-stage {
+    width: min(420px, 90vw);
+    min-height: 620px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+/* Heading */
+
+.print-animation-title {
+    margin-top: 20px;
+    margin-bottom: 3px;
+
+    font-size: 27px;
+    font-weight: 600;
+
+    color: #151922;
+
+    letter-spacing: -0.5px;
+
+    text-align: center;
+}
+
+.print-animation-subtitle {
+    margin: 0;
+
+    color: #5269d8;
+
+    font-size: 17px;
+    font-weight: 500;
+
+    text-align: center;
+}
+
+/* =========================================
+   PRINTER
+   ========================================= */
+
+.print-machine {
+    position: absolute;
+
+    top: 105px;
+
+    width: 320px;
+    height: 48px;
+
+    z-index: 10;
+
+    border-radius: 6px 6px 4px 4px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #f8d486 0%,
+            #e6ad4f 35%,
+            #c98b32 70%,
+            #a96821 100%
+        );
+
+    box-shadow:
+        0 7px 12px rgba(139, 91, 24, 0.28),
+        inset 0 2px 2px rgba(255,255,255,0.65),
+        inset 0 -4px 5px rgba(98,55,10,0.18);
+
+    overflow: hidden;
+}
+
+/* Printer highlight */
+
+.print-machine::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 7px;
+
+    height: 5px;
+
+    background: rgba(255,255,255,0.48);
+
+    border-radius: 50%;
+}
+
+/* Printer dark paper slot */
+
+.print-machine::after {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 2px;
+
+    height: 4px;
+
+    background: #74491d;
+
+    border-radius: 50%;
+
+    opacity: 0.75;
+}
+
+/* =========================================
+   PAPER
+   ========================================= */
+
+.print-paper {
+    position: absolute;
+
+    top: 135px;
+
+    width: 260px;
+    height: 405px;
+
+    z-index: 5;
+
+    background: #ffffff;
+
+    border-radius: 0 0 10px 10px;
+
+    box-shadow:
+        0 15px 30px rgba(0,0,0,0.12),
+        0 4px 8px rgba(0,0,0,0.06);
+
+    transform-origin: top center;
+
+    transform:
+        translateY(-390px)
+        scaleY(0.15);
+
+    opacity: 0;
+
+    overflow: hidden;
+}
+
+/* Animation state */
+
+.print-animation-overlay.active .print-paper {
+    animation: paperFeed 4.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes paperFeed {
+
+    0% {
+        transform:
+            translateY(-390px)
+            scaleY(0.15);
+
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+
+        transform:
+            translateY(-330px)
+            scaleY(0.35);
+    }
+
+    25% {
+        transform:
+            translateY(-240px)
+            scaleY(0.55);
+    }
+
+    45% {
+        transform:
+            translateY(-120px)
+            scaleY(0.78);
+    }
+
+    70% {
+        transform:
+            translateY(0)
+            scaleY(0.94);
+    }
+
+    100% {
+        transform:
+            translateY(0)
+            scaleY(1);
+
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   RECEIPT CONTENT
+   ========================================= */
+
+.receipt-content {
+    width: 100%;
+    min-height: 100%;
+
+    box-sizing: border-box;
+
+    padding: 22px 18px 18px;
+
+    color: #242424;
+
+    font-size: 10px;
+}
+
+.receipt-brand {
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.6px;
+
+    color: #5269d8;
+}
+
+.receipt-subtitle {
+    margin-top: 3px;
+
+    font-size: 7px;
+
+    color: #777;
+
+    letter-spacing: 0.7px;
+}
+
+.receipt-line {
+    width: 100%;
+    height: 1px;
+
+    margin: 13px 0;
+
+    background: #dedede;
+}
+
+.receipt-total {
+    font-size: 23px;
+    font-weight: 700;
+
+    margin: 8px 0 12px;
+}
+
+.receipt-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin: 7px 0;
+
+    color: #444;
+}
+
+.receipt-row strong {
+    color: #222;
+}
+
+.receipt-small {
+    font-size: 7px;
+    color: #888;
+}
+
+.receipt-thanks {
+    margin-top: 20px;
+
+    text-align: center;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+/* Barcode */
+
+.receipt-barcode {
+    height: 42px;
+
+    margin: 18px auto 8px;
+
+    width: 72%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #222 0px,
+            #222 2px,
+            transparent 2px,
+            transparent 4px,
+            #222 4px,
+            #222 5px,
+            transparent 5px,
+            transparent 7px
+        );
+
+    opacity: 0.72;
+}
+
+/* Torn bottom */
+
+.receipt-tear {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: -1px;
+
+    height: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 5px,
+            #fff 5px
+        );
+
+    background-size: 10px 10px;
+}
+
+/* =========================================
+   PRINTING STATUS
+   ========================================= */
+
+.print-status {
+    position: absolute;
+
+    top: 560px;
+
+    width: 100%;
+
+    text-align: center;
+}
+
+.print-status-main {
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #242424;
+
+    margin-bottom: 5px;
+}
+
+.print-status-text {
+    font-size: 12px;
+
+    color: #777;
+}
+
+/* Printing dots */
+
+.printing-dots span {
+    opacity: 0;
+
+    animation: printingDots 1.4s infinite;
+}
+
+.printing-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.printing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.printing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes printingDots {
+
+    0%,
+    60%,
+    100% {
+        opacity: 0;
+    }
+
+    30% {
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   WATERMARK
+   ========================================= */
+
+.print-watermark {
+    position: fixed;
+
+    bottom: 18px;
+    left: 0;
+    right: 0;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: rgba(50, 50, 50, 0.55);
+
+    letter-spacing: 0.4px;
+
+    pointer-events: none;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .print-animation-stage {
+        width: 94vw;
+        min-height: 600px;
+    }
+
+    .print-animation-title {
+        font-size: 24px;
+    }
+
+    .print-animation-subtitle {
+        font-size: 15px;
+    }
+
+    .print-machine {
+        width: 290px;
+        height: 45px;
+    }
+
+    .print-paper {
+        width: 235px;
+        height: 380px;
+
+        top: 132px;
+    }
+
+    .print-status {
+        top: 535px;
+    }
+}
