@@ -6,6 +6,7 @@ const fileName = document.getElementById("fileName");
 const fileType = document.getElementById("fileType");
 
 const processing = document.getElementById("processing");
+const previewArea = document.getElementById("previewArea");
 
 fileInput.addEventListener("change", function () {
 
@@ -17,7 +18,17 @@ fileInput.addEventListener("change", function () {
     fileType.textContent = file.type || "File";
 
     fileInfo.style.display = "block";
+previewArea.innerHTML = "";
 
+if (file.type.startsWith("image/")) {
+
+    const image = document.createElement("img");
+
+    image.src = URL.createObjectURL(file);
+
+    previewArea.appendChild(image);
+
+}
     processing.style.display = "block";
 
     setTimeout(function () {
